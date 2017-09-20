@@ -1,0 +1,7 @@
+[server]
+#rancher-server1 ansible_ssh_host=10.9.5.11 rancher_db_host=10.9.5.11
+rancher-server2 ansible_ssh_host=10.9.5.28 rancher_db_host=10.9.5.11
+[agent]
+rancher-agent ansible_ssh_host=10.9.5.22
+[mysql]
+rancher-mysql ansible_ssh_host=10.9.5.11 rancher_db_host=10.9.5.11
