@@ -1,4 +1,4 @@
 ---
 - name: run rancher-server 
   become: yes
-  shell: docker run -d --name {{ rancher_server_name }} --restart=unless-stopped -p 8080:8080 -p 9345:9345 {{ rancher_server_image }}:{{ rancher_server_image_tag }} --db-host {{ rancher_db_host }} --db-port {{ rancher_db_port }} --db-user {{ rancher_db_user }} --db-pass {{ rancher_db_pass }} --db-name {{ rancher_db_name }} --advertise-address {{ ansible_ssh_host }}
+  shell: docker run -d --name {{ rancher_server_name }} --restart=unless-stopped -p {{ rancher_server_port }}:8080 -p 9345:9345 {{ rancher_server_image }}:{{ rancher_server_image_tag }} --db-host {{ rancher_db_host }} --db-port {{ rancher_db_port }} --db-user {{ rancher_db_user }} --db-pass {{ rancher_db_pass }} --db-name {{ rancher_db_name }} --advertise-address {{ ansible_ssh_host }}

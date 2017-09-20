@@ -10,7 +10,10 @@ rancher_db_root_password: very_secure_root_pass
 rancher_server_image: rancher/server
 rancher_server_image_tag: v1.6.9-rc4
 rancher_server_name: rancher-server
-rancher_ha_url: 10.9.5.11
+rancher_server_port: 8080
+
+rancher_server_dns: rc-i.xzxpay.com
 
 #todo:
-#
+# call api to create local auth user
+# add agents 

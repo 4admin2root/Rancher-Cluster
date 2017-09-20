@@ -5,10 +5,10 @@
   roles:
     - rancher-mysql
 
-#- hosts: server
+#- hosts: agent
 #  become: yes
 #  roles:
-#    - rancher-bootstrap
+#    - rancher-agent
 
 - hosts: server
   become: yes
