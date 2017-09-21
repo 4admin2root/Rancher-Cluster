@@ -1,0 +1,33 @@
+---
+- name: install jq
+  yum: name=jq
+
+- name: get project id
+  shell: curl -u "{{ rancher_server_api_accesskey }}:{{ rancher_server_api_secretkey }}" http://{{ rancher_server_dns }}:{{ rancher_server_port }}/v2-beta/project | jq '.data[].id' | sed 's/"//g'
+  register: project_result
+
+- name: create token
+  uri:
+    url: http://{{ rancher_server_dns }}:{{ rancher_server_port }}/v1/projects/{{ project_result.stdout }}/registrationTokens
+    method: POST
+    HEADER_Content-Type: "application/json"
+    HEADER_Accept: "application/json"
+    user: "{{ rancher_server_api_accesskey }}"
+    password: "{{ rancher_server_api_secretkey }}"
+    force_basic_auth: yes
+    body: "{'description': 'from rancher_ha', 'name': 'Fansible' }"
+    status_code: 201
+    body_format: json
+  when: inventory_hostname == groups['agent'][0]
+    
+
+- name: get token
+  shell: curl -u "{{ rancher_server_api_accesskey }}:{{ rancher_server_api_secretkey }}" http://{{ rancher_server_dns }}:{{ rancher_server_port }}/v2-beta/projects/{{ project_result.stdout }}/registrationtokens |jq '.data[].registrationUrl' |sed 's/"/ /g' 
+  register: token_result
+
+- name: show token
+  debug: var=token_result
+
+- name: run rancher-agent
+  become: yes
+  shell: docker run --rm --privileged -v /var/run/docker.sock:/var/run/docker.sock -v /var/lib/rancher:/var/lib/rancher {{ rancher_agent_image }}:{{ rancher_agent_image_tag }} {{ token_result.stdout }}

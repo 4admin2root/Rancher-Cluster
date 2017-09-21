@@ -1,4 +1,67 @@
 ---
+#- name: install jq
+#  yum: name=jq
+
 - name: run rancher-server 
   become: yes
   shell: docker run -d --name {{ rancher_server_name }} --restart=unless-stopped -p {{ rancher_server_port }}:8080 -p 9345:9345 {{ rancher_server_image }}:{{ rancher_server_image_tag }} --db-host {{ rancher_db_host }} --db-port {{ rancher_db_port }} --db-user {{ rancher_db_user }} --db-pass {{ rancher_db_pass }} --db-name {{ rancher_db_name }} --advertise-address {{ ansible_ssh_host }}
+
+- name: check rancher-server
+  shell: curl http://{{ rancher_server_dns }}:{{ rancher_server_port }}
+  register: result
+  until: result.rc == 0
+  retries: 60
+  delay: 20 
+
+- name: create apikey
+  uri:
+   url: http://{{ rancher_server_dns }}:{{ rancher_server_port }}/v2-beta/apikey
+   method: POST
+   HEADER_Content-Type: "application/json"
+   HEADER_Accept: "application/json"
+   body: "{'accountId':'1a1', 'name':'ansible', 'publicValue':'{{ rancher_server_api_accesskey }}', 'secretValue':'{{ rancher_server_api_secretkey }}'}"
+   body_format: json
+   status_code: 201
+  register: apikey_result
+  when: inventory_hostname == groups['server'][0]
+
+- name: create local user
+  uri:
+   url: http://{{ rancher_server_dns }}:{{ rancher_server_port }}/v2-beta/localauthconfigs
+   method: POST
+   HEADER_Content-Type: "application/json"
+   HEADER_Accept: "application/json"
+   body: "{'accessMode':'unrestricted', 'enabled':true, 'name':'admin', 'password':'{{ rancher_server_password }}', 'username':'{{ rancher_server_username }}'}"
+   body_format: json
+   status_code: 201
+  register: user_result
+  when: inventory_hostname == groups['server'][0]
+  tags:
+      - test
+
+- name: show apikey result
+  debug: var=apikey_result
+  when: inventory_hostname == groups['server'][0]
+
+- name: show user result
+  debug: var=user_result
+  when: inventory_hostname == groups['server'][0]
+  tags:
+      - test
+
+- name: create api host
+  uri:
+   url: http://{{ rancher_server_dns }}:{{ rancher_server_port }}/v2-beta/settings/api.host
+   method: PUT
+   HEADER_Content-Type: "application/json"
+   HEADER_Accept: "application/json"
+   body: "{'id':'api.host','type':'activeSetting','baseType':'setting','name':'api.host','activeValue':null,'inDb':false,'source':null,'value':'http://{{ rancher_server_dns }}:{{ rancher_server_port }}'}"
+   body_format: json
+   status_code: 200
+   user: "{{ rancher_server_api_accesskey }}"
+   password: "{{ rancher_server_api_secretkey }}"
+   force_basic_auth: yes
+  register: user_result
+  when: inventory_hostname == groups['server'][0]
+  tags:
+      - api.host

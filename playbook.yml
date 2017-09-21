@@ -4,13 +4,11 @@
   become: yes
   roles:
     - rancher-mysql
-
-#- hosts: agent
-#  become: yes
-#  roles:
-#    - rancher-agent
-
 - hosts: server
   become: yes
   roles:
     - rancher-server
+- hosts: agent
+  become: yes
+  roles:
+    - rancher-agent

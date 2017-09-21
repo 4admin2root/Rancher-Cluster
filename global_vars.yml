@@ -1,19 +1,21 @@
 rancher_db_port: 3306
 rancher_db_name: cattle
 rancher_db_user: rancher
-rancher_db_pass: Passw0rd
+rancher_db_pass: Pass_w0rd
 rancher_db_datadir: /var/lib/rancher/mysql
 rancher_db_image: mysql
 rancher_db_image_tag: 5.7
 rancher_db_root_password: very_secure_root_pass
 
 rancher_server_image: rancher/server
-rancher_server_image_tag: v1.6.9-rc4
+rancher_server_image_tag: v1.6.10
 rancher_server_name: rancher-server
 rancher_server_port: 8080
-
 rancher_server_dns: rc-i.xzxpay.com
+rancher_server_username: admin
+rancher_server_password: Pass_w0rd
+rancher_server_api_accesskey: D4350098AEC29ECBC2F9
+rancher_server_api_secretkey: yWMoeVE3EBiymgF1yeRQbxyotLUhngbkfexxEyXL
 
-#todo:
-# call api to create local auth user
-# add agents 
+rancher_agent_image: rancher/agent
+rancher_agent_image_tag: v1.2.6

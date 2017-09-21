@@ -1,15 +1,11 @@
 ---
-- name: reload mysql-rancher
+- name: reload rancher-mysql
   become: yes
   command: systemctl daemon-reload
-  tags:
-    - rancher-server
 
-- name: restart mysql-rancher
+- name: restart rancher-mysql
   become: yes
   service:
-    name: mysql-rancher
+    name: rancher-mysql
     state: restarted
-  tags:
-    - rancher-server
 

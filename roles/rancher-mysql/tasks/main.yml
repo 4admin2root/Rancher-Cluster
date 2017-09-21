@@ -6,12 +6,12 @@
     dest: "{{ item.dest }}"
     mode: 0600
   with_items:
-    - src: mysql-rancher.service.j2
-      dest: /usr/lib/systemd/system/mysql-rancher.service
-    - src: mysql-rancher.env.j2
-      dest: /etc/default/mysql-rancher.env
+    - src: rancher-mysql.service.j2
+      dest: /usr/lib/systemd/system/rancher-mysql.service
+    - src: rancher-mysql.env.j2
+      dest: /etc/default/rancher-mysql.env
   notify:
-    - reload mysql-rancher
-    - restart mysql-rancher
+    - reload rancher-mysql
+    - restart rancher-mysql
   tags:
     - rancher-server

@@ -1,22 +1,22 @@
 [Unit]
-Description=mysql-rancher
+Description=rancher-mysql
 
 [Service]
 Restart=on-failure
 RestartSec=20
 TimeoutStartSec=0
 
-ExecStartPre=-/usr/bin/docker rm -f mysql-rancher
+ExecStartPre=-/usr/bin/docker rm -f rancher-mysql
 
 
 ExecStart=/usr/bin/docker run \
-    --name=mysql-rancher \
-    --env-file=/etc/default/mysql-rancher.env \
+    --name=rancher-mysql \
+    --env-file=/etc/default/rancher-mysql.env \
     -p {{ rancher_db_port }}:3306 \
     -v {{ rancher_db_datadir }}:/var/lib/mysql \
     {{ rancher_db_image }}:{{ rancher_db_image_tag }}
 
-ExecStop=/usr/bin/docker kill mysql-rancher
+ExecStop=/usr/bin/docker kill rancher-mysql
 
 [Install]
 WantedBy=multi-user.target
