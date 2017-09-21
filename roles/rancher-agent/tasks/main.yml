@@ -7,19 +7,24 @@
   register: project_result
 
 - name: create token
+# curl -u "D4350098AEC29ECBC2F9:yWMoeVE3EBiymgF1yeRQbxyotLUhngbkfexxEyXL" -X POST -H 'content-type: application/json' --data '{"type":"registrationToken"}' http://rc-i.xzxpay.com:8080/v2-beta/projects/1a5/registrationtoken
+# curl -u "D4350098AEC29ECBC2F9:yWMoeVE3EBiymgF1yeRQbxyotLUhngbkfexxEyXL" http://rc-i.xzxpay.com:8080/v2-beta/projects/1a5/registrationtokens |jq
   uri:
-    url: http://{{ rancher_server_dns }}:{{ rancher_server_port }}/v1/projects/{{ project_result.stdout }}/registrationTokens
+    url: http://{{ rancher_server_dns }}:{{ rancher_server_port }}/v2-beta/projects/{{ project_result.stdout }}/registrationtoken
     method: POST
     HEADER_Content-Type: "application/json"
     HEADER_Accept: "application/json"
     user: "{{ rancher_server_api_accesskey }}"
     password: "{{ rancher_server_api_secretkey }}"
     force_basic_auth: yes
-    body: "{'description': 'from rancher_ha', 'name': 'Fansible' }"
+    body: {"type":"registrationToken"}
     status_code: 201
     body_format: json
+  register: token_create_result
   when: inventory_hostname == groups['agent'][0]
     
+- name: show token create
+  debug: var=token_create_result
 
 - name: get token
   shell: curl -u "{{ rancher_server_api_accesskey }}:{{ rancher_server_api_secretkey }}" http://{{ rancher_server_dns }}:{{ rancher_server_port }}/v2-beta/projects/{{ project_result.stdout }}/registrationtokens |jq '.data[].registrationUrl' |sed 's/"/ /g' 
