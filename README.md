@@ -1,4 +1,4 @@
-# Rancher-HA
+# Rancher-Cluster
 ansible playbook for rancher  
 # run
 * edit inventory and global_vars.yml  

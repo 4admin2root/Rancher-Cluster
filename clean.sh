@@ -5,3 +5,4 @@ ssh 10.9.5.11  sudo rm -rf /var/lib/rancher/mysql
 ssh 10.9.5.11  sudo docker rm -f rancher-server
 ssh 10.9.5.28  sudo docker rm -f rancher-server
 
+ansible -m shell -a "docker ps -a |grep rancher |awk '{ print \$1 }' |xargs docker rm -f " -b agent
